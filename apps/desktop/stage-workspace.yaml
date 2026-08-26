@@ -1,0 +1,10 @@
+packages:
+  - workspace/*
+allowBuilds:
+  esbuild: true
+  lefthook: true
+  node-pty: true
+  '@google/genai': false
+  protobufjs: false
+  koffi: true
+  '@deepseek-ai/dsh-subprocess-local@file:workspace/dsh-subprocess-local': true
