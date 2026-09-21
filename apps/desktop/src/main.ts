@@ -771,6 +771,23 @@ async function main(): Promise<void> {
   publishUpdate(updateState)
 }
 
+/**
+ * Disable macOS window-occlusion tracking before any renderer starts.
+ *
+ * Electron leaves `MacWebContentsOcclusion` enabled. A window created while another application is
+ * frontmost is marked occluded, Chromium then produces no frames, and the window stays blank after
+ * it is activated. Electron's own disabled features are preserved.
+ */
+function disableMacOSWindowOcclusion(): void {
+  if (process.platform !== 'darwin') return
+  const features = app.commandLine.getSwitchValue('disable-features')
+    .split(',').map(feature => feature.trim()).filter(feature => feature !== '')
+  features.push('MacWebContentsOcclusion')
+  app.commandLine.appendSwitch('disable-features', features.join(','))
+}
+
+disableMacOSWindowOcclusion()
+
 const ownsDesktopInstance = claimDesktopSingleInstance(app, () => { focusPrimaryWindow() })
 
 if (ownsDesktopInstance) void app.whenReady().then(main).catch(async (error: unknown) => {
